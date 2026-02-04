@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Pencil, Trash2, ExternalLink } from "lucide-react"
+import { DescriptionTooltip } from "@/components/ui/description-tooltip"
 
 interface SourceListProps {
 	sources: Source[]
@@ -47,7 +48,10 @@ export function SourceList({
 				{sources.map((s) => (
 					<TableRow key={s.id}>
 						<TableCell className="font-medium">
-							{s.name}
+							<DescriptionTooltip
+								name={s.name}
+								description={s.description}
+							/>
 						</TableCell>
 						<TableCell>
 							<Link

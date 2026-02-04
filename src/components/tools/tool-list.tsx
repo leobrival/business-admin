@@ -10,6 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Pencil, Trash2, ExternalLink } from "lucide-react"
+import { DescriptionTooltip } from "@/components/ui/description-tooltip"
 
 interface ToolListProps {
 	tools: Tool[]
@@ -45,7 +46,10 @@ export function ToolList({ tools, onEdit, onDelete }: ToolListProps) {
 				{tools.map((t) => (
 					<TableRow key={t.id}>
 						<TableCell className="font-medium">
-							{t.name}
+							<DescriptionTooltip
+								name={t.name}
+								description={t.description}
+							/>
 						</TableCell>
 						<TableCell>
 							{t.category ? (

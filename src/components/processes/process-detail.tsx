@@ -29,6 +29,7 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog"
 import { Plus, Trash2, ExternalLink } from "lucide-react"
+import { DescriptionTooltip } from "@/components/ui/description-tooltip"
 
 const statusColors: Record<string, string> = {
 	active: "bg-green-100 text-green-800",
@@ -179,7 +180,10 @@ export function ProcessDetailView({
 								{tools.map((pt) => (
 									<TableRow key={pt.id}>
 										<TableCell className="font-medium">
-											{pt.tool_name}
+											<DescriptionTooltip
+												name={pt.tool_name || ""}
+												description={pt.tool_description}
+											/>
 										</TableCell>
 										<TableCell className="text-muted-foreground">
 											{pt.tool_description || "—"}

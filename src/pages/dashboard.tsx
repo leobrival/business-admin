@@ -1,6 +1,8 @@
-import { useQuery } from "@tanstack/react-query"
+import { useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Link } from "react-router-dom"
 import { api } from "@/lib/api"
+import type { LintResult } from "@/lib/types"
 import {
 	Card,
 	CardContent,
@@ -8,8 +10,24 @@ import {
 	CardTitle,
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { GitBranch, Wrench, FileText } from "lucide-react"
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog"
+import {
+	GitBranch,
+	Wrench,
+	FileText,
+	FileCheck,
+	ChevronDown,
+	ChevronRight,
+	Loader2,
+} from "lucide-react"
+import { DescriptionTooltip } from "@/components/ui/description-tooltip"
 
 const statusColors: Record<string, string> = {
 	active: "bg-green-100 text-green-800",
@@ -20,9 +38,32 @@ const statusColors: Record<string, string> = {
 }
 
 export default function DashboardPage() {
+	const queryClient = useQueryClient()
+	const [showLint, setShowLint] = useState(false)
+	const [lintResults, setLintResults] = useState<LintResult[]>([])
+	const [lintSummary, setLintSummary] = useState({ total: 0, withIssues: 0 })
+	const [expandedProcess, setExpandedProcess] = useState<number | null>(null)
+
 	const { data, isLoading } = useQuery({
 		queryKey: ["dashboard"],
 		queryFn: api.getDashboardStats,
+	})
+
+	const lintMutation = useMutation({
+		mutationFn: api.lintMarkdown,
+		onSuccess: (res) => {
+			setLintResults(res.results)
+			setLintSummary({ total: res.total, withIssues: res.withIssues })
+			setShowLint(true)
+		},
+	})
+
+	const fixMutation = useMutation({
+		mutationFn: api.fixMarkdown,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["dashboard"] })
+			lintMutation.mutate()
+		},
 	})
 
 	if (isLoading) {
@@ -46,7 +87,22 @@ export default function DashboardPage() {
 
 	return (
 		<div className="space-y-6">
-			<h2 className="text-2xl font-bold">Dashboard</h2>
+			<div className="flex items-center justify-between">
+				<h2 className="text-2xl font-bold">Dashboard</h2>
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={() => lintMutation.mutate()}
+					disabled={lintMutation.isPending}
+				>
+					{lintMutation.isPending ? (
+						<Loader2 className="mr-1 h-4 w-4 animate-spin" />
+					) : (
+						<FileCheck className="mr-1 h-4 w-4" />
+					)}
+					Lint Markdown
+				</Button>
+			</div>
 
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
 				<Card>
@@ -148,7 +204,10 @@ export default function DashboardPage() {
 							>
 								<div>
 									<span className="font-medium">
-										{p.name}
+										<DescriptionTooltip
+											name={p.name}
+											description={p.description}
+										/>
 									</span>
 									{p.category && (
 										<span className="ml-2 text-sm text-muted-foreground">
@@ -168,6 +227,126 @@ export default function DashboardPage() {
 					</div>
 				</CardContent>
 			</Card>
+
+			{/* Lint Markdown Dialog */}
+			<Dialog open={showLint} onOpenChange={setShowLint}>
+				<DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto">
+					<DialogHeader>
+						<DialogTitle>Markdown Lint Results</DialogTitle>
+					</DialogHeader>
+					<p className="text-sm text-muted-foreground">
+						{lintSummary.withIssues} of {lintSummary.total} processes
+						with content have issues.
+					</p>
+					{lintResults.length === 0 ? (
+						<p className="py-4 text-center text-sm text-muted-foreground">
+							All processes are clean!
+						</p>
+					) : (
+						<div className="space-y-2">
+							{lintResults.map((r) => (
+								<div
+									key={r.process_id}
+									className="rounded-md border"
+								>
+									<button
+										type="button"
+										className="flex w-full items-center justify-between p-3 text-left hover:bg-muted"
+										onClick={() =>
+											setExpandedProcess(
+												expandedProcess === r.process_id
+													? null
+													: r.process_id,
+											)
+										}
+									>
+										<div className="flex items-center gap-2">
+											{expandedProcess === r.process_id ? (
+												<ChevronDown className="h-4 w-4" />
+											) : (
+												<ChevronRight className="h-4 w-4" />
+											)}
+											<span className="font-medium">
+												{r.process_name}
+											</span>
+											<Badge variant="secondary">
+												{r.issues.length} issue
+												{r.issues.length > 1
+													? "s"
+													: ""}
+											</Badge>
+										</div>
+										{r.issues.some((i) => i.fixable) && (
+											<Button
+												variant="outline"
+												size="sm"
+												disabled={fixMutation.isPending}
+												onClick={(e) => {
+													e.stopPropagation()
+													fixMutation.mutate(
+														r.process_id,
+													)
+												}}
+											>
+												{fixMutation.isPending ? (
+													<Loader2 className="mr-1 h-3 w-3 animate-spin" />
+												) : null}
+												Auto-fix
+											</Button>
+										)}
+									</button>
+									{expandedProcess === r.process_id && (
+										<div className="border-t px-3 pb-3">
+											<table className="mt-2 w-full text-sm">
+												<thead>
+													<tr className="text-left text-muted-foreground">
+														<th className="pb-1 pr-3">
+															Line
+														</th>
+														<th className="pb-1 pr-3">
+															Rule
+														</th>
+														<th className="pb-1">
+															Description
+														</th>
+													</tr>
+												</thead>
+												<tbody>
+													{r.issues.map(
+														(issue, idx) => (
+															<tr
+																key={idx}
+																className="border-t"
+															>
+																<td className="py-1 pr-3 tabular-nums">
+																	{issue.line}
+																</td>
+																<td className="py-1 pr-3 font-mono text-xs">
+																	{issue.rule}
+																</td>
+																<td className="py-1">
+																	{
+																		issue.description
+																	}
+																	{issue.detail && (
+																		<span className="ml-1 text-muted-foreground">
+																			({issue.detail})
+																		</span>
+																	)}
+																</td>
+															</tr>
+														),
+													)}
+												</tbody>
+											</table>
+										</div>
+									)}
+								</div>
+							))}
+						</div>
+					)}
+				</DialogContent>
+			</Dialog>
 		</div>
 	)
 }

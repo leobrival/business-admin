@@ -4,6 +4,7 @@ import type {
 	Source,
 	ProcessTool,
 	DashboardStats,
+	LintResponse,
 } from "./types"
 
 const BASE = "/api"
@@ -115,5 +116,13 @@ export const api = {
 	unlinkTool: (id: number) =>
 		request<{ success: boolean }>(`/process-tools/${id}`, {
 			method: "DELETE",
+		}),
+
+	// Markdown Lint
+	lintMarkdown: () => request<LintResponse>("/lint-markdown"),
+	fixMarkdown: (processId: number) =>
+		request<{ success: boolean; fixed: number }>("/lint-markdown", {
+			method: "POST",
+			body: JSON.stringify({ action: "fix", process_id: processId }),
 		}),
 }

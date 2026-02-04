@@ -58,3 +58,24 @@ export interface DashboardStats {
 	by_category: Record<string, number>
 	recent_processes: Process[]
 }
+
+export interface LintIssue {
+	line: number
+	rule: string
+	description: string
+	detail: string | null
+	context: string | null
+	fixable: boolean
+}
+
+export interface LintResult {
+	process_id: number
+	process_name: string
+	issues: LintIssue[]
+}
+
+export interface LintResponse {
+	results: LintResult[]
+	total: number
+	withIssues: number
+}

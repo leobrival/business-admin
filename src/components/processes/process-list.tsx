@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Pencil, Trash2, Eye } from "lucide-react"
+import { DescriptionTooltip } from "@/components/ui/description-tooltip"
 
 const statusColors: Record<string, string> = {
 	active: "bg-green-100 text-green-800",
@@ -61,7 +62,10 @@ export function ProcessList({
 				{processes.map((p) => (
 					<TableRow key={p.id}>
 						<TableCell className="font-medium">
-							{p.name}
+							<DescriptionTooltip
+								name={p.name}
+								description={p.description}
+							/>
 						</TableCell>
 						<TableCell>
 							{p.category || (
