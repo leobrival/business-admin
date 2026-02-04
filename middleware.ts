@@ -10,10 +10,7 @@ export default function middleware(request: Request) {
 
 	// Skip auth if env vars not configured
 	if (!expectedUser || !expectedPassword) {
-		return new Response(
-			`Auth env vars missing: user=${!!expectedUser}, pass=${!!expectedPassword}`,
-			{ status: 500 },
-		)
+		return undefined
 	}
 
 	if (authorization) {
@@ -27,11 +24,6 @@ export default function middleware(request: Request) {
 			if (user === expectedUser && password === expectedPassword) {
 				return undefined
 			}
-
-			return new Response(
-				`Auth failed: user_match=${user === expectedUser}, pass_match=${password === expectedPassword}, decoded_len=${decoded.length}`,
-				{ status: 401, headers: { "WWW-Authenticate": 'Basic realm="Business Admin"' } },
-			)
 		}
 	}
 
