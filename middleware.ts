@@ -7,7 +7,9 @@ export default function middleware(request: Request) {
 		const [scheme, encoded] = authorization.split(" ")
 		if (scheme === "Basic" && encoded) {
 			const decoded = atob(encoded)
-			const [user, password] = decoded.split(":")
+			const colonIndex = decoded.indexOf(":")
+			const user = decoded.slice(0, colonIndex)
+			const password = decoded.slice(colonIndex + 1)
 
 			if (
 				user === process.env.BASIC_AUTH_USER &&
