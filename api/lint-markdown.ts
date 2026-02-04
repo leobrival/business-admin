@@ -32,7 +32,7 @@ export default async function handler(
 		if (req.method === "GET") {
 			const processes = await sql`
 				SELECT id, name, content FROM processes
-				WHERE content IS NOT NULL AND content != ''
+				WHERE content IS NOT NULL AND content != '' AND deleted_at IS NULL
 				ORDER BY name
 			`
 

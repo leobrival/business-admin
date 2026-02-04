@@ -34,8 +34,9 @@ export default async function handler(
 		if (req.method === "GET") {
 			const rows = await sql`
 				SELECT t.*,
-					(SELECT COUNT(*) FROM process_tools pt WHERE pt.tool_id = t.id) as process_count
+					(SELECT COUNT(*) FROM process_tools pt JOIN processes p ON p.id = pt.process_id WHERE pt.tool_id = t.id AND p.deleted_at IS NULL) as process_count
 				FROM tools t
+				WHERE t.deleted_at IS NULL
 				ORDER BY t.name ASC
 			`
 			return res.json(rows)

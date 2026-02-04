@@ -29,7 +29,7 @@ export default async function handler(
 					SELECT s.*, p.name as process_name
 					FROM sources s
 					JOIN processes p ON p.id = s.process_id
-					WHERE s.process_id = ${Number(process_id)}
+					WHERE s.process_id = ${Number(process_id)} AND s.deleted_at IS NULL AND p.deleted_at IS NULL
 					ORDER BY s.created_at DESC
 				`
 			} else {
@@ -37,6 +37,7 @@ export default async function handler(
 					SELECT s.*, p.name as process_name
 					FROM sources s
 					JOIN processes p ON p.id = s.process_id
+					WHERE s.deleted_at IS NULL AND p.deleted_at IS NULL
 					ORDER BY s.created_at DESC
 				`
 			}

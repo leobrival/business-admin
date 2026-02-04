@@ -37,7 +37,7 @@ export default async function handler(
 	try {
 		if (req.method === "GET") {
 			const tools = await sql`
-				SELECT * FROM tools WHERE id = ${id}
+				SELECT * FROM tools WHERE id = ${id} AND deleted_at IS NULL
 			`
 			if (tools.length === 0) {
 				return res
@@ -48,7 +48,7 @@ export default async function handler(
 				SELECT pt.*, p.name as process_name
 				FROM process_tools pt
 				JOIN processes p ON p.id = pt.process_id
-				WHERE pt.tool_id = ${id}
+				WHERE pt.tool_id = ${id} AND p.deleted_at IS NULL
 				ORDER BY pt.created_at DESC
 			`
 			return res.json({ tool: tools[0], processes })
@@ -76,8 +76,7 @@ export default async function handler(
 		}
 
 		if (req.method === "DELETE") {
-			await sql`DELETE FROM process_tools WHERE tool_id = ${id}`
-			await sql`DELETE FROM tools WHERE id = ${id}`
+			await sql`UPDATE tools SET deleted_at = NOW(), updated_at = NOW() WHERE id = ${id}`
 			return res.json({ success: true })
 		}
 

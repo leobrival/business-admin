@@ -11,6 +11,7 @@ export interface Process {
 	expiration_date: string | null
 	created_at: string
 	updated_at: string
+	deleted_at?: string | null
 	tool_count?: number
 	source_count?: number
 }
@@ -25,6 +26,7 @@ export interface Tool {
 	category: string | null
 	created_at: string
 	updated_at: string
+	deleted_at?: string | null
 	process_count?: number
 }
 
@@ -37,6 +39,7 @@ export interface Source {
 	type: string
 	description: string | null
 	created_at: string
+	deleted_at?: string | null
 	process_name?: string
 }
 

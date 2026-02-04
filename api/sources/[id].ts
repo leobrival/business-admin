@@ -44,7 +44,7 @@ export default async function handler(
 		}
 
 		if (req.method === "DELETE") {
-			await sql`DELETE FROM sources WHERE id = ${id}`
+			await sql`UPDATE sources SET deleted_at = NOW() WHERE id = ${id}`
 			return res.json({ success: true })
 		}
 

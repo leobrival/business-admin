@@ -36,14 +36,14 @@ export default async function handler(
 			if (req.query.stats === "true") {
 				const processes = await sql`
 					SELECT p.*,
-						(SELECT COUNT(*) FROM process_tools pt WHERE pt.process_id = p.id) as tool_count,
-						(SELECT COUNT(*) FROM sources s WHERE s.process_id = p.id) as source_count
-					FROM processes p ORDER BY p.updated_at DESC
+						(SELECT COUNT(*) FROM process_tools pt JOIN tools t ON t.id = pt.tool_id WHERE pt.process_id = p.id AND t.deleted_at IS NULL) as tool_count,
+						(SELECT COUNT(*) FROM sources s WHERE s.process_id = p.id AND s.deleted_at IS NULL) as source_count
+					FROM processes p WHERE p.deleted_at IS NULL ORDER BY p.updated_at DESC
 				`
 				const tools =
-					await sql`SELECT COUNT(*) as count FROM tools`
+					await sql`SELECT COUNT(*) as count FROM tools WHERE deleted_at IS NULL`
 				const sources =
-					await sql`SELECT COUNT(*) as count FROM sources`
+					await sql`SELECT COUNT(*) as count FROM sources WHERE deleted_at IS NULL`
 
 				const byStatus: Record<string, number> = {}
 				const byCategory: Record<string, number> = {}
@@ -70,36 +70,37 @@ export default async function handler(
 			if (status && category) {
 				rows = await sql`
 					SELECT p.*,
-						(SELECT COUNT(*) FROM process_tools pt WHERE pt.process_id = p.id) as tool_count,
-						(SELECT COUNT(*) FROM sources s WHERE s.process_id = p.id) as source_count
+						(SELECT COUNT(*) FROM process_tools pt JOIN tools t ON t.id = pt.tool_id WHERE pt.process_id = p.id AND t.deleted_at IS NULL) as tool_count,
+						(SELECT COUNT(*) FROM sources s WHERE s.process_id = p.id AND s.deleted_at IS NULL) as source_count
 					FROM processes p
-					WHERE p.status = ${status as string} AND p.category = ${category as string}
+					WHERE p.deleted_at IS NULL AND p.status = ${status as string} AND p.category = ${category as string}
 					ORDER BY p.updated_at DESC
 				`
 			} else if (status) {
 				rows = await sql`
 					SELECT p.*,
-						(SELECT COUNT(*) FROM process_tools pt WHERE pt.process_id = p.id) as tool_count,
-						(SELECT COUNT(*) FROM sources s WHERE s.process_id = p.id) as source_count
+						(SELECT COUNT(*) FROM process_tools pt JOIN tools t ON t.id = pt.tool_id WHERE pt.process_id = p.id AND t.deleted_at IS NULL) as tool_count,
+						(SELECT COUNT(*) FROM sources s WHERE s.process_id = p.id AND s.deleted_at IS NULL) as source_count
 					FROM processes p
-					WHERE p.status = ${status as string}
+					WHERE p.deleted_at IS NULL AND p.status = ${status as string}
 					ORDER BY p.updated_at DESC
 				`
 			} else if (category) {
 				rows = await sql`
 					SELECT p.*,
-						(SELECT COUNT(*) FROM process_tools pt WHERE pt.process_id = p.id) as tool_count,
-						(SELECT COUNT(*) FROM sources s WHERE s.process_id = p.id) as source_count
+						(SELECT COUNT(*) FROM process_tools pt JOIN tools t ON t.id = pt.tool_id WHERE pt.process_id = p.id AND t.deleted_at IS NULL) as tool_count,
+						(SELECT COUNT(*) FROM sources s WHERE s.process_id = p.id AND s.deleted_at IS NULL) as source_count
 					FROM processes p
-					WHERE p.category = ${category as string}
+					WHERE p.deleted_at IS NULL AND p.category = ${category as string}
 					ORDER BY p.updated_at DESC
 				`
 			} else {
 				rows = await sql`
 					SELECT p.*,
-						(SELECT COUNT(*) FROM process_tools pt WHERE pt.process_id = p.id) as tool_count,
-						(SELECT COUNT(*) FROM sources s WHERE s.process_id = p.id) as source_count
+						(SELECT COUNT(*) FROM process_tools pt JOIN tools t ON t.id = pt.tool_id WHERE pt.process_id = p.id AND t.deleted_at IS NULL) as tool_count,
+						(SELECT COUNT(*) FROM sources s WHERE s.process_id = p.id AND s.deleted_at IS NULL) as source_count
 					FROM processes p
+					WHERE p.deleted_at IS NULL
 					ORDER BY p.updated_at DESC
 				`
 			}

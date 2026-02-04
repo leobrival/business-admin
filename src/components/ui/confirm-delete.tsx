@@ -22,7 +22,7 @@ interface ConfirmDeleteProps {
 export function ConfirmDelete({
 	onConfirm,
 	title = "Are you sure?",
-	description = "This action cannot be undone. This will permanently delete this item.",
+	description = "This item will be archived for 7 days before permanent deletion.",
 }: ConfirmDeleteProps) {
 	const [open, setOpen] = useState(false)
 
@@ -49,7 +49,7 @@ export function ConfirmDelete({
 							setOpen(false)
 						}}
 					>
-						Delete
+						Archive
 					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>
