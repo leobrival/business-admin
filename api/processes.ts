@@ -114,6 +114,14 @@ export default async function handler(
 					.status(400)
 					.json({ error: "Name is required" })
 			}
+			if (
+				content &&
+				content.split("\n").length > 500
+			) {
+				return res
+					.status(400)
+					.json({ error: "Content must not exceed 500 lines" })
+			}
 			const slug = toSlug(name)
 			const rows = await sql`
 				INSERT INTO processes (name, slug, description, category, status, content, loom_link)

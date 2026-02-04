@@ -64,6 +64,14 @@ export default async function handler(
 		if (req.method === "PUT") {
 			const { name, description, category, status, content, loom_link } =
 				req.body
+			if (
+				content &&
+				content.split("\n").length > 500
+			) {
+				return res
+					.status(400)
+					.json({ error: "Content must not exceed 500 lines" })
+			}
 			const slug = name ? toSlug(name) : null
 			const rows = await sql`
 				UPDATE processes

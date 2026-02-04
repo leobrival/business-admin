@@ -45,6 +45,9 @@ export function ProcessForm({
 	)
 	const [content, setContent] = useState(initial?.content || "")
 
+	const contentLineCount = content ? content.split("\n").length : 0
+	const contentOverLimit = contentLineCount > 500
+
 	function handleSubmit(e: React.FormEvent) {
 		e.preventDefault()
 		onSubmit({
@@ -102,7 +105,14 @@ export function ProcessForm({
 				</div>
 			</div>
 			<div className="space-y-2">
-				<Label htmlFor="content">Content</Label>
+				<div className="flex items-center justify-between">
+					<Label htmlFor="content">Content</Label>
+					<span
+						className={`text-xs ${contentOverLimit ? "text-destructive font-medium" : "text-muted-foreground"}`}
+					>
+						{contentLineCount} / 500 lines
+					</span>
+				</div>
 				<Textarea
 					id="content"
 					value={content}
@@ -110,6 +120,11 @@ export function ProcessForm({
 					rows={4}
 					placeholder="Process content..."
 				/>
+				{contentOverLimit && (
+					<p className="text-xs text-destructive">
+						Content must not exceed 500 lines.
+					</p>
+				)}
 			</div>
 			<div className="flex justify-end gap-2">
 				<Button
@@ -119,7 +134,7 @@ export function ProcessForm({
 				>
 					Cancel
 				</Button>
-				<Button type="submit" disabled={!name || loading}>
+				<Button type="submit" disabled={!name || loading || contentOverLimit}>
 					{loading ? "Saving..." : "Save"}
 				</Button>
 			</div>
