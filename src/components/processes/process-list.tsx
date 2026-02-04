@@ -10,8 +10,9 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Pencil, Trash2, Eye } from "lucide-react"
+import { Pencil, Eye } from "lucide-react"
 import { DescriptionTooltip } from "@/components/ui/description-tooltip"
+import { ConfirmDelete } from "@/components/ui/confirm-delete"
 
 const statusColors: Record<string, string> = {
 	active: "bg-green-100 text-green-800",
@@ -109,13 +110,11 @@ export function ProcessList({
 								>
 									<Pencil className="h-4 w-4" />
 								</Button>
-								<Button
-									variant="ghost"
-									size="icon"
-									onClick={() => onDelete(p.id)}
-								>
-									<Trash2 className="h-4 w-4 text-destructive" />
-								</Button>
+								<ConfirmDelete
+									onConfirm={() => onDelete(p.id)}
+									title="Delete process?"
+									description="This will permanently delete this process and all its linked tools and sources."
+								/>
 							</div>
 						</TableCell>
 					</TableRow>

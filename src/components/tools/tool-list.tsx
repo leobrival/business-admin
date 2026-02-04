@@ -9,8 +9,9 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Pencil, Trash2, ExternalLink } from "lucide-react"
+import { Pencil, ExternalLink } from "lucide-react"
 import { DescriptionTooltip } from "@/components/ui/description-tooltip"
+import { ConfirmDelete } from "@/components/ui/confirm-delete"
 
 interface ToolListProps {
 	tools: Tool[]
@@ -89,13 +90,11 @@ export function ToolList({ tools, onEdit, onDelete }: ToolListProps) {
 								>
 									<Pencil className="h-4 w-4" />
 								</Button>
-								<Button
-									variant="ghost"
-									size="icon"
-									onClick={() => onDelete(t.id)}
-								>
-									<Trash2 className="h-4 w-4 text-destructive" />
-								</Button>
+								<ConfirmDelete
+									onConfirm={() => onDelete(t.id)}
+									title="Delete tool?"
+									description="This will permanently delete this tool and unlink it from all processes."
+								/>
 							</div>
 						</TableCell>
 					</TableRow>

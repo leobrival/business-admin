@@ -28,8 +28,9 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog"
-import { Plus, Trash2, ExternalLink } from "lucide-react"
+import { Plus, ExternalLink } from "lucide-react"
 import { DescriptionTooltip } from "@/components/ui/description-tooltip"
+import { ConfirmDelete } from "@/components/ui/confirm-delete"
 
 const statusColors: Record<string, string> = {
 	active: "bg-green-100 text-green-800",
@@ -189,17 +190,15 @@ export function ProcessDetailView({
 											{pt.tool_description || "—"}
 										</TableCell>
 										<TableCell>
-											<Button
-												variant="ghost"
-												size="icon"
-												onClick={() =>
+											<ConfirmDelete
+												onConfirm={() =>
 													unlinkToolMutation.mutate(
 														pt.id,
 													)
 												}
-											>
-												<Trash2 className="h-4 w-4 text-destructive" />
-											</Button>
+												title="Unlink tool?"
+												description="This will remove the link between this tool and the process."
+											/>
 										</TableCell>
 									</TableRow>
 								))}
@@ -261,17 +260,15 @@ export function ProcessDetailView({
 											)}
 										</TableCell>
 										<TableCell>
-											<Button
-												variant="ghost"
-												size="icon"
-												onClick={() =>
+											<ConfirmDelete
+												onConfirm={() =>
 													deleteSourceMutation.mutate(
 														s.id,
 													)
 												}
-											>
-												<Trash2 className="h-4 w-4 text-destructive" />
-											</Button>
+												title="Delete source?"
+												description="This will permanently delete this source."
+											/>
 										</TableCell>
 									</TableRow>
 								))}

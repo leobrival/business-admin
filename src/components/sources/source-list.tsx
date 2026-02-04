@@ -9,8 +9,9 @@ import {
 	TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { Pencil, Trash2, ExternalLink } from "lucide-react"
+import { Pencil, ExternalLink } from "lucide-react"
 import { DescriptionTooltip } from "@/components/ui/description-tooltip"
+import { ConfirmDelete } from "@/components/ui/confirm-delete"
 
 interface SourceListProps {
 	sources: Source[]
@@ -92,13 +93,11 @@ export function SourceList({
 								>
 									<Pencil className="h-4 w-4" />
 								</Button>
-								<Button
-									variant="ghost"
-									size="icon"
-									onClick={() => onDelete(s.id)}
-								>
-									<Trash2 className="h-4 w-4 text-destructive" />
-								</Button>
+								<ConfirmDelete
+									onConfirm={() => onDelete(s.id)}
+									title="Delete source?"
+									description="This will permanently delete this source."
+								/>
 							</div>
 						</TableCell>
 					</TableRow>
