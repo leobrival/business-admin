@@ -54,10 +54,10 @@ export function ProcessDetailView({
 	const [showAddSource, setShowAddSource] = useState(false)
 	const [selectedToolId, setSelectedToolId] = useState("")
 	const [sourceForm, setSourceForm] = useState({
-		title: "",
+		name: "",
 		url: "",
 		type: "",
-		notes: "",
+		description: "",
 	})
 
 	const { data: allTools } = useQuery({
@@ -98,7 +98,7 @@ export function ProcessDetailView({
 				queryKey: ["process", process.id],
 			})
 			setShowAddSource(false)
-			setSourceForm({ title: "", url: "", type: "", notes: "" })
+			setSourceForm({ name: "", url: "", type: "", description: "" })
 		},
 	})
 
@@ -135,14 +135,14 @@ export function ProcessDetailView({
 						{process.description}
 					</p>
 				)}
-				{process.steps && (
+				{process.content && (
 					<Card className="mt-4">
 						<CardHeader>
-							<CardTitle className="text-base">Steps</CardTitle>
+							<CardTitle className="text-base">Content</CardTitle>
 						</CardHeader>
 						<CardContent>
 							<pre className="whitespace-pre-wrap text-sm">
-								{process.steps}
+								{process.content}
 							</pre>
 						</CardContent>
 					</Card>
@@ -236,7 +236,7 @@ export function ProcessDetailView({
 								{sources.map((s) => (
 									<TableRow key={s.id}>
 										<TableCell className="font-medium">
-											{s.title}
+											{s.name}
 										</TableCell>
 										<TableCell>
 											{s.type || "—"}
@@ -338,22 +338,22 @@ export function ProcessDetailView({
 						onSubmit={(e) => {
 							e.preventDefault()
 							addSourceMutation.mutate({
-								title: sourceForm.title,
+								name: sourceForm.name,
 								url: sourceForm.url || null,
-								type: sourceForm.type || null,
-								notes: sourceForm.notes || null,
+								type: sourceForm.type || "document",
+								description: sourceForm.description || null,
 							})
 						}}
 					>
 						<div className="space-y-2">
-							<Label htmlFor="source-title">Title *</Label>
+							<Label htmlFor="source-name">Name *</Label>
 							<Input
-								id="source-title"
-								value={sourceForm.title}
+								id="source-name"
+								value={sourceForm.name}
 								onChange={(e) =>
 									setSourceForm((f) => ({
 										...f,
-										title: e.target.value,
+										name: e.target.value,
 									}))
 								}
 								required
@@ -387,14 +387,14 @@ export function ProcessDetailView({
 							/>
 						</div>
 						<div className="space-y-2">
-							<Label htmlFor="source-notes">Notes</Label>
+							<Label htmlFor="source-description">Description</Label>
 							<Input
-								id="source-notes"
-								value={sourceForm.notes}
+								id="source-description"
+								value={sourceForm.description}
 								onChange={(e) =>
 									setSourceForm((f) => ({
 										...f,
-										notes: e.target.value,
+										description: e.target.value,
 									}))
 								}
 							/>
@@ -410,7 +410,7 @@ export function ProcessDetailView({
 							<Button
 								type="submit"
 								disabled={
-									!sourceForm.title ||
+									!sourceForm.name ||
 									addSourceMutation.isPending
 								}
 							>

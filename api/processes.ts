@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node"
-import { getDb } from "./_db"
+import { getDb, toSlug } from "./_db"
 
 export default async function handler(
 	req: VercelRequest,
@@ -93,16 +93,17 @@ export default async function handler(
 		}
 
 		if (req.method === "POST") {
-			const { name, description, category, status, steps } =
+			const { name, description, category, status, content, loom_link } =
 				req.body
 			if (!name) {
 				return res
 					.status(400)
 					.json({ error: "Name is required" })
 			}
+			const slug = toSlug(name)
 			const rows = await sql`
-				INSERT INTO processes (name, description, category, status, steps)
-				VALUES (${name}, ${description || null}, ${category || null}, ${status || "draft"}, ${steps || null})
+				INSERT INTO processes (name, slug, description, category, status, content, loom_link)
+				VALUES (${name}, ${slug}, ${description || null}, ${category || null}, ${status || "draft"}, ${content || null}, ${loom_link || null})
 				RETURNING *
 			`
 			return res.status(201).json(rows[0])

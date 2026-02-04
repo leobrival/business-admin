@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node"
-import { getDb } from "../_db"
+import { getDb, toSlug } from "../_db"
 
 export default async function handler(
 	req: VercelRequest,
@@ -48,15 +48,18 @@ export default async function handler(
 		}
 
 		if (req.method === "PUT") {
-			const { name, description, category, status, steps } =
+			const { name, description, category, status, content, loom_link } =
 				req.body
+			const slug = name ? toSlug(name) : null
 			const rows = await sql`
 				UPDATE processes
 				SET name = COALESCE(${name ?? null}, name),
+					slug = COALESCE(${slug}, slug),
 					description = COALESCE(${description ?? null}, description),
 					category = COALESCE(${category ?? null}, category),
 					status = COALESCE(${status ?? null}, status),
-					steps = COALESCE(${steps ?? null}, steps),
+					content = COALESCE(${content ?? null}, content),
+					loom_link = COALESCE(${loom_link ?? null}, loom_link),
 					updated_at = NOW()
 				WHERE id = ${id}
 				RETURNING *

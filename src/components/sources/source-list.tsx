@@ -34,7 +34,7 @@ export function SourceList({
 		<Table>
 			<TableHeader>
 				<TableRow>
-					<TableHead>Title</TableHead>
+					<TableHead>Name</TableHead>
 					<TableHead>Process</TableHead>
 					<TableHead>Type</TableHead>
 					<TableHead>URL</TableHead>
@@ -47,7 +47,7 @@ export function SourceList({
 				{sources.map((s) => (
 					<TableRow key={s.id}>
 						<TableCell className="font-medium">
-							{s.title}
+							{s.name}
 						</TableCell>
 						<TableCell>
 							<Link

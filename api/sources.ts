@@ -40,15 +40,15 @@ export default async function handler(
 		}
 
 		if (req.method === "POST") {
-			const { process_id, title, url, type, notes } = req.body
-			if (!process_id || !title) {
+			const { process_id, name, url, type, description } = req.body
+			if (!process_id || !name || !type) {
 				return res.status(400).json({
-					error: "process_id and title are required",
+					error: "process_id, name, and type are required",
 				})
 			}
 			const rows = await sql`
-				INSERT INTO sources (process_id, title, url, type, notes)
-				VALUES (${process_id}, ${title}, ${url || null}, ${type || null}, ${notes || null})
+				INSERT INTO sources (process_id, name, url, type, description)
+				VALUES (${process_id}, ${name}, ${url || null}, ${type}, ${description || null})
 				RETURNING *
 			`
 			return res.status(201).json(rows[0])

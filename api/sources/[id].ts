@@ -22,13 +22,13 @@ export default async function handler(
 
 	try {
 		if (req.method === "PUT") {
-			const { title, url, type, notes } = req.body
+			const { name, url, type, description } = req.body
 			const rows = await sql`
 				UPDATE sources
-				SET title = COALESCE(${title ?? null}, title),
+				SET name = COALESCE(${name ?? null}, name),
 					url = COALESCE(${url ?? null}, url),
 					type = COALESCE(${type ?? null}, type),
-					notes = COALESCE(${notes ?? null}, notes)
+					description = COALESCE(${description ?? null}, description)
 				WHERE id = ${id}
 				RETURNING *
 			`

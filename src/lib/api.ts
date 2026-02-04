@@ -107,7 +107,6 @@ export const api = {
 	linkTool: (data: {
 		process_id: number
 		tool_id: number
-		notes?: string
 	}) =>
 		request<ProcessTool>("/process-tools", {
 			method: "POST",

@@ -31,10 +31,12 @@ export function SourceForm({
 	const [processId, setProcessId] = useState(
 		initial?.process_id ? String(initial.process_id) : "",
 	)
-	const [title, setTitle] = useState(initial?.title || "")
+	const [name, setName] = useState(initial?.name || "")
 	const [url, setUrl] = useState(initial?.url || "")
 	const [type, setType] = useState(initial?.type || "")
-	const [notes, setNotes] = useState(initial?.notes || "")
+	const [description, setDescription] = useState(
+		initial?.description || "",
+	)
 
 	const { data: processes } = useQuery({
 		queryKey: ["processes"],
@@ -46,15 +48,15 @@ export function SourceForm({
 		e.preventDefault()
 		onSubmit({
 			process_id: initial?.process_id || Number(processId),
-			title,
+			name,
 			url: url || null,
-			type: type || null,
-			notes: notes || null,
+			type: type || "document",
+			description: description || null,
 		})
 	}
 
 	const canSubmit =
-		title && (hideProcessSelect || processId) && !loading
+		name && type && (hideProcessSelect || processId) && !loading
 
 	return (
 		<form onSubmit={handleSubmit} className="space-y-4">
@@ -82,11 +84,11 @@ export function SourceForm({
 				</div>
 			)}
 			<div className="space-y-2">
-				<Label htmlFor="src-title">Title *</Label>
+				<Label htmlFor="src-name">Name *</Label>
 				<Input
-					id="src-title"
-					value={title}
-					onChange={(e) => setTitle(e.target.value)}
+					id="src-name"
+					value={name}
+					onChange={(e) => setName(e.target.value)}
 					required
 				/>
 			</div>
@@ -100,20 +102,21 @@ export function SourceForm({
 				/>
 			</div>
 			<div className="space-y-2">
-				<Label htmlFor="src-type">Type</Label>
+				<Label htmlFor="src-type">Type *</Label>
 				<Input
 					id="src-type"
 					value={type}
 					onChange={(e) => setType(e.target.value)}
 					placeholder="e.g. document, video, article..."
+					required
 				/>
 			</div>
 			<div className="space-y-2">
-				<Label htmlFor="src-notes">Notes</Label>
+				<Label htmlFor="src-description">Description</Label>
 				<Input
-					id="src-notes"
-					value={notes}
-					onChange={(e) => setNotes(e.target.value)}
+					id="src-description"
+					value={description}
+					onChange={(e) => setDescription(e.target.value)}
 				/>
 			</div>
 			<div className="flex justify-end gap-2">

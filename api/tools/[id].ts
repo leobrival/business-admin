@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node"
-import { getDb } from "../_db"
+import { getDb, toSlug } from "../_db"
 
 export default async function handler(
 	req: VercelRequest,
@@ -42,9 +42,11 @@ export default async function handler(
 
 		if (req.method === "PUT") {
 			const { name, description, url, category } = req.body
+			const slug = name ? toSlug(name) : null
 			const rows = await sql`
 				UPDATE tools
 				SET name = COALESCE(${name ?? null}, name),
+					slug = COALESCE(${slug}, slug),
 					description = COALESCE(${description ?? null}, description),
 					url = COALESCE(${url ?? null}, url),
 					category = COALESCE(${category ?? null}, category),

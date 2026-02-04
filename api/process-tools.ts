@@ -41,7 +41,7 @@ export default async function handler(
 		}
 
 		if (req.method === "POST") {
-			const { process_id, tool_id, notes } = req.body
+			const { process_id, tool_id } = req.body
 			if (!process_id || !tool_id) {
 				return res.status(400).json({
 					error: "process_id and tool_id are required",
@@ -58,8 +58,8 @@ export default async function handler(
 				})
 			}
 			const rows = await sql`
-				INSERT INTO process_tools (process_id, tool_id, notes)
-				VALUES (${process_id}, ${tool_id}, ${notes || null})
+				INSERT INTO process_tools (process_id, tool_id)
+				VALUES (${process_id}, ${tool_id})
 				RETURNING *
 			`
 			return res.status(201).json(rows[0])

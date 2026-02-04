@@ -5,10 +5,12 @@ export function getDb() {
 	return sql
 }
 
-export function corsHeaders() {
-	return {
-		"Access-Control-Allow-Origin": "*",
-		"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-		"Access-Control-Allow-Headers": "Content-Type",
-	}
+export function toSlug(name: string): string {
+	return name
+		.toLowerCase()
+		.normalize("NFD")
+		.replace(/[\u0300-\u036f]/g, "")
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "")
+		.slice(0, 50)
 }

@@ -43,7 +43,7 @@ export function ProcessForm({
 	const [status, setStatus] = useState(
 		initial?.status || "draft",
 	)
-	const [steps, setSteps] = useState(initial?.steps || "")
+	const [content, setContent] = useState(initial?.content || "")
 
 	function handleSubmit(e: React.FormEvent) {
 		e.preventDefault()
@@ -52,7 +52,7 @@ export function ProcessForm({
 			description: description || null,
 			category: category || null,
 			status,
-			steps: steps || null,
+			content: content || null,
 		})
 	}
 
@@ -102,13 +102,13 @@ export function ProcessForm({
 				</div>
 			</div>
 			<div className="space-y-2">
-				<Label htmlFor="steps">Steps</Label>
+				<Label htmlFor="content">Content</Label>
 				<Textarea
-					id="steps"
-					value={steps}
-					onChange={(e) => setSteps(e.target.value)}
+					id="content"
+					value={content}
+					onChange={(e) => setContent(e.target.value)}
 					rows={4}
-					placeholder="Describe process steps..."
+					placeholder="Process content..."
 				/>
 			</div>
 			<div className="flex justify-end gap-2">

@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node"
-import { getDb } from "./_db"
+import { getDb, toSlug } from "./_db"
 
 export default async function handler(
 	req: VercelRequest,
@@ -34,9 +34,10 @@ export default async function handler(
 					.status(400)
 					.json({ error: "Name is required" })
 			}
+			const slug = toSlug(name)
 			const rows = await sql`
-				INSERT INTO tools (name, description, url, category)
-				VALUES (${name}, ${description || null}, ${url || null}, ${category || null})
+				INSERT INTO tools (name, slug, description, url, category)
+				VALUES (${name}, ${slug}, ${description || null}, ${url || null}, ${category || null})
 				RETURNING *
 			`
 			return res.status(201).json(rows[0])
