@@ -1,5 +1,9 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node"
-import { getDb } from "../_db"
+import { neon } from "@neondatabase/serverless"
+
+function getDb() {
+	return neon(process.env.NEON_DATABASE_URL!)
+}
 
 export default async function handler(
 	req: VercelRequest,

@@ -1,5 +1,19 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node"
-import { getDb, toSlug } from "../_db"
+import { neon } from "@neondatabase/serverless"
+
+function getDb() {
+	return neon(process.env.NEON_DATABASE_URL!)
+}
+
+function toSlug(name: string): string {
+	return name
+		.toLowerCase()
+		.normalize("NFD")
+		.replace(/[\u0300-\u036f]/g, "")
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "")
+		.slice(0, 50)
+}
 
 export default async function handler(
 	req: VercelRequest,
