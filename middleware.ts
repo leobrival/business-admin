@@ -27,6 +27,11 @@ export default function middleware(request: Request) {
 			if (user === expectedUser && password === expectedPassword) {
 				return undefined
 			}
+
+			return new Response(
+				`Auth failed: user_match=${user === expectedUser}, pass_match=${password === expectedPassword}, decoded_len=${decoded.length}`,
+				{ status: 401, headers: { "WWW-Authenticate": 'Basic realm="Business Admin"' } },
+			)
 		}
 	}
 
