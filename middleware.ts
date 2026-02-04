@@ -10,7 +10,10 @@ export default function middleware(request: Request) {
 
 	// Skip auth if env vars not configured
 	if (!expectedUser || !expectedPassword) {
-		return new Response(null, { status: 200 })
+		return new Response(
+			`Auth env vars missing: user=${!!expectedUser}, pass=${!!expectedPassword}`,
+			{ status: 500 },
+		)
 	}
 
 	if (authorization) {
